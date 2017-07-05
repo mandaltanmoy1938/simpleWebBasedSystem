@@ -2,7 +2,12 @@ package com.example.tanmoy.simpleWebBasedSystem.tasks;
 
 import java.util.Date;
 
+import javax.servlet.http.HttpServletResponse;
+import javax.validation.Valid;
+
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -19,22 +24,23 @@ public class TaskController {
 	@GetMapping(value = "/")
 	public String taskList(Model model) {
 		model.addAttribute("taskList", taskService.findAllTask());
-		return "";
+		return "/tasks/task_list";
 	}
 
-	@GetMapping(value = "/create_task")
+	@GetMapping(value = "/task/create")
 	public String createTask(Model model) {
 		model.addAttribute("taskEntity", new TaskEntity());
 		model.addAttribute("title", "Create Task");
-		return "";
+		model.addAttribute("url", "create");
+		return "/tasks/save_task";
 	}
 
-	@PostMapping(value = "/create_task")
-	public String createTask(Model model, @ModelAttribute TaskEntity taskEntity, BindingResult bindingResult) {
+	@PostMapping(value = "/task/create")
+	public String createTask(Model model, @Valid @ModelAttribute TaskEntity taskEntity, BindingResult bindingResult) {
 		if (bindingResult.hasErrors()) {
 			model.addAttribute("taskEntity", taskEntity);
 			model.addAttribute("title", "Create Task");
-			return "";
+			return "/tasks/save_task";
 		} else {
 			taskEntity.setDateCreated(new Date());
 			taskService.saveTask(taskEntity);
@@ -43,41 +49,45 @@ public class TaskController {
 
 	}
 
-	@GetMapping(value = "/update_task/{id}")
+	@GetMapping(value = "/task/update/{id}")
 	public String updateTask(Model model, @PathVariable int id) {
 		model.addAttribute("taskEntity", taskService.getTaskById(id));
 		model.addAttribute("title", "Update Task");
-		return "";
+		model.addAttribute("url", "update");
+		return "/tasks/save_task";
 	}
 
-	@PostMapping(value = "/update_task/{id}")
-	public String updateTask(Model model, @PathVariable int id, @ModelAttribute TaskEntity taskEntity,
-			BindingResult bindingResult) {
+	@PostMapping(value = "/task/update/{id}")
+
+	public String updateTask(Model model, @PathVariable int id, @Valid @ModelAttribute TaskEntity taskEntity,
+			BindingResult bindingResult, HttpServletResponse res) {
 		if (id == taskEntity.getId()) {
-			TaskEntity taskEntityBeforeUpdate=taskService.getTaskById(taskEntity.getId());
 			if (bindingResult.hasErrors()) {
-				model.addAttribute("taskEntity", taskEntityBeforeUpdate);
+				model.addAttribute("taskEntity", taskEntity);
 				model.addAttribute("title", "Update Task");
-				return "";
+				model.addAttribute("url", "update");
+				return "/tasks/save_task";
 			} else {
+				TaskEntity taskEntityBeforeUpdate = taskService.getTaskById(taskEntity.getId());
 				taskEntity.setDateCreated(taskEntityBeforeUpdate.getDateCreated());
 				taskEntity.setDateUpdated(new Date());
 				taskService.saveTask(taskEntity);
 				return "redirect:/";
 			}
 		} else {
-			bindingResult.reject("500", "Bad Request");
+			bindingResult.reject("400", "Bad Request");
 			model.addAttribute("taskEntity", taskService.getTaskById(id));
 			model.addAttribute("title", "Update Task");
-			return "";
+			model.addAttribute("url", "update");
+			res.setStatus(HttpStatus.BAD_REQUEST.value());
+			return "/tasks/save_task";
 		}
 	}
-	
-	@GetMapping(value="/delete/{id}")
-	public String deleteTask(@PathVariable int id, Model model){
+
+	@GetMapping(value = "/task/delete/{id}")
+	public String deleteTask(@PathVariable int id, Model model) {
 		taskService.deleteTask(id);
-		model.addAttribute("taskList", taskService.findAllTask());
-		return "";
+		return "redirect:/";
 	}
 
 }

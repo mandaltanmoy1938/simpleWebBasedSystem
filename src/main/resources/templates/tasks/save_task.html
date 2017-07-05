@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+	<head>
+		<meta charset="ISO-8859-1"></meta>
+		<title th:text="${title}"></title>
+	</head>
+	<body>
+		<h3 th:text="${title}"></h3>
+		<form action="#" th:action="@{/task/__${url}__/__*{id!=null}?*{id}:''__}" th:object="${taskEntity}" method="post" >
+			<input type="hidden" th:field="*{id}"></input>
+			<table>
+				<tr>
+					<td>Task Name: </td>
+					<td>
+						<input type="text" th:field="*{name}" placeholder="Task Name"/>
+						<div th:if="${#fields.hasErrors('name')}">
+                        	<label th:errors="*{name}" style="color:red"></label>
+                        </div>
+					</td>
+				</tr>
+				<tr>
+					<td>Description: </td>
+					<td><textarea th:field="*{description}" placeholder="Description"/></td>
+				</tr>
+				<tr>
+					<td><input type="submit" th:value="${title}"></input></td>
+					<td><a th:href="@{/}">Back to List</a></td>
+				</tr>
+			</table>
+		</form>
+	</body>
+</html>

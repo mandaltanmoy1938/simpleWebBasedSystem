@@ -15,13 +15,13 @@ import org.hibernate.validator.constraints.NotBlank;
 public class TaskEntity {
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
-	Integer id;
+	private Integer id;
 
-	@NotBlank
-	String name;
-	String description;
-	Date dateCreated;
-	Date dateUpdated;
+	@NotBlank(message="Can not be Empty")
+	private String name;
+	private String description;
+	private Date dateCreated;
+	private Date dateUpdated;
 
 	public TaskEntity() {
 	}
