@@ -35,7 +35,7 @@
 					<td th:text = " ${task.getDateUpdated()}"></td>
 					<td>
 						<a th:href="@{|/task/update/${task.getId()}|}"><button>Edit</button></a>
-						<a th:href="@{|/task/delete/${task.getId()}|}"><button onclick="confirm('Want to delete?')">Delete</button></a>
+						<a th:href="@{|/task/delete/${task.getId()}|}" onclick="return confirm('Want to delete?');"><button>Delete</button></a>
 					</td>
 				</tr>
 			</tbody>

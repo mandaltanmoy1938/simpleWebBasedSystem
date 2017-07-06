@@ -6,7 +6,7 @@
 	</head>
 	<body>
 		<h3 th:text="${title}"></h3>
-		<form action="#" th:action="@{/task/__${url}__/__*{id!=null}?*{id}:''__}" th:object="${taskEntity}" method="post" >
+		<form action="#" th:action="@{/task/save/}" th:object="${taskEntity}" method="post" >
 			<input type="hidden" th:field="*{id}"></input>
 			<table>
 				<tr>
@@ -24,7 +24,7 @@
 				</tr>
 				<tr>
 					<td><input type="submit" th:value="${title}"></input></td>
-					<td><a th:href="@{/}">Back to List</a></td>
+					<td><a th:href="@{/task/list}">Back to List</a></td>
 				</tr>
 			</table>
 		</form>
