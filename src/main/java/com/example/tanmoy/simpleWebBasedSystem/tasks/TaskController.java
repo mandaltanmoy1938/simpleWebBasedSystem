@@ -38,30 +38,25 @@ public class TaskController {
 
 	@PostMapping(value = "/save")
 	public String createTask(Model model, @Valid @ModelAttribute TaskEntity taskEntity, BindingResult bindingResult) {
-		if (taskEntity.getId() == null) {
-			if (bindingResult.hasErrors()) {
-				model.addAttribute("taskEntity", taskEntity);
+		if (bindingResult.hasErrors()) {
+			model.addAttribute("taskEntity", taskEntity);
+			if (taskEntity.getId() == null) {
 				model.addAttribute("title", "Create Task");
-				return "/tasks/save_task";
 			} else {
-				taskEntity.setDateCreated(new Date());
-				taskService.saveTask(taskEntity);
-				return "redirect:/task/list";
-			}
-		} else {
-			if (bindingResult.hasErrors()) {
-				model.addAttribute("taskEntity", taskEntity);
 				model.addAttribute("title", "Update Task");
-				return "/tasks/save_task";
+			}
+			return "/tasks/save_task";
+		} else {
+			if (taskEntity.getId() == null) {
+				taskEntity.setDateCreated(new Date());
 			} else {
 				TaskEntity taskEntityBeforeUpdate = taskService.getTaskById(taskEntity.getId());
 				taskEntity.setDateCreated(taskEntityBeforeUpdate.getDateCreated());
 				taskEntity.setDateUpdated(new Date());
-				taskService.saveTask(taskEntity);
-				return "redirect:/task/list";
 			}
+			taskService.saveTask(taskEntity);
+			return "redirect:/task/list";
 		}
-
 	}
 
 	@GetMapping(value = "/update/{id}")
@@ -76,5 +71,4 @@ public class TaskController {
 		taskService.deleteTask(id);
 		return "redirect:/task/list";
 	}
-
 }
